@@ -2,7 +2,7 @@ from django.db.models import QuerySet
 from django.http import QueryDict
 from rest_framework.exceptions import ValidationError
 
-from cars.models import CarModel
+from apps.cars.models import CarModel
 
 
 def car_filter(query: QueryDict) -> QuerySet:
