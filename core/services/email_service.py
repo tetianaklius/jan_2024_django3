@@ -6,6 +6,8 @@ from django.template.loader import get_template
 from core.dataclasses.user_dataclass import User
 from core.services.jwt_service import ActivateToken, JWTService
 
+from apps.users.models import UserModel
+
 
 class EmailService:
     @staticmethod
@@ -30,3 +32,27 @@ class EmailService:
             context={'name': user.profile.name, 'url': url},
             subject='Register'
         )
+
+##########################################
+    @staticmethod
+    def check_email(email: str) -> UserModel | None:
+        return UserModel.objects.filter(email=email).first()
+
+    @classmethod
+    def send_token(cls, email: str, token: str) -> None:
+        url = f'http://localhost:3000/restore_password/{token}'
+        cls.__send_email(
+            email,
+            'token_to_restore.html',
+            {'url': url},
+            'Restore Password Email')
+
+    @classmethod
+    def send_password_ok(cls, email: str) -> None:
+        cls.__send_email(
+            email,
+            'password_confirm.html',
+            {},
+            'Password Changed Email')
+
+
