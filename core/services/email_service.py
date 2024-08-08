@@ -4,9 +4,7 @@ from django.core.mail import EmailMultiAlternatives
 from django.template.loader import get_template
 
 from core.dataclasses.user_dataclass import User
-from core.services.jwt_service import ActivateToken, JWTService
-
-from apps.users.models import UserModel
+from core.services.jwt_service import ActivateToken, JWTService, RecoverToken
 
 
 class EmailService:
@@ -33,26 +31,22 @@ class EmailService:
             subject='Register'
         )
 
-##########################################
-    @staticmethod
-    def check_email(email: str) -> UserModel | None:
-        return UserModel.objects.filter(email=email).first()
+    @classmethod
+    def recovery_email(cls, user: User):
+        token = JWTService.create_token(user, RecoverToken)
+        url = f'http://localhost:3000/recovery/{token}'
+        cls.__send_email(
+            user.email,
+            template_name='recovery.html',
+            context={'url': url},
+            subject='Recovery Password'
+        )
 
     @classmethod
-    def send_token(cls, email: str, token: str) -> None:
-        url = f'http://localhost:3000/restore_password/{token}'
+    def recovery_confirm_email(cls, user: User):
         cls.__send_email(
-            email,
-            'token_to_restore.html',
-            {'url': url},
-            'Restore Password Email')
-
-    @classmethod
-    def send_password_ok(cls, email: str) -> None:
-        cls.__send_email(
-            email,
-            'password_confirm.html',
-            {},
-            'Password Changed Email')
-
-
+            user.email,
+            template_name='recovery_confirm.html',
+            context={},
+            subject='Password is changed successfully!'
+        )

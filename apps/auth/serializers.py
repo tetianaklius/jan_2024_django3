@@ -1,8 +1,16 @@
-# from rest_framework import serializers
-#
-#
-# class ResetPasswordSerializer(serializers.Serializer):
-#     new_password = serializers.RegexField(
-#         write_only=True,
-#         required=True,
-#     )
+from rest_framework import serializers
+
+from apps.users.views import UserModel
+
+
+class EmailSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+
+
+class PasswordSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = UserModel
+        fields = ('password',)
+
+
