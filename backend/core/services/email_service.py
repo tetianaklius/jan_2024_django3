@@ -1,14 +1,20 @@
 import os
 
+from django.contrib.auth import get_user_model
 from django.core.mail import EmailMultiAlternatives
+from django.db.models import Model
 from django.template.loader import get_template
+
+from configs.celery import app
 
 from core.dataclasses.user_dataclass import User
 from core.services.jwt_service import ActivateToken, JWTService, RecoverToken
 
+UserModel : User | Model = get_user_model()
 
 class EmailService:
     @staticmethod
+    @app.task
     def __send_email(to: str, template_name: str, context: dict, subject='') -> None:
         template = get_template(template_name)
         html_content = template.render(context)
@@ -35,7 +41,7 @@ class EmailService:
     def recovery_email(cls, user: User):
         token = JWTService.create_token(user, RecoverToken)
         url = f'http://localhost:3000/recovery/{token}'
-        cls.__send_email(
+        cls.__send_email.delay(
             user.email,
             template_name='recovery.html',
             context={'url': url},
@@ -50,3 +56,9 @@ class EmailService:
             context={},
             subject='Password is changed successfully!'
         )
+
+    @staticmethod
+    @app.task
+    def spam():
+        for user in UserModel.objects.all():
+            EmailService.__send_email(user.email, template_name='spam.html', context={'name': user.profile.name}, subject='Spam')

@@ -17,6 +17,7 @@ class AutoParkListCreateView(ListCreateAPIView):
 
 class AutoParkAddCarView(GenericAPIView):
     queryset = AutoParkModel.objects.all()
+    serializer_class = AutoParkSerializer
 
     def post(self, *args, **kwargs):
         auto_park = self.get_object()

@@ -15,6 +15,7 @@ from apps.users.serializers import UserSerializer
 
 class ActivateUserView(GenericAPIView):
     permission_classes = (AllowAny,)
+    serializer_class = UserSerializer
 
     def patch(self, *args, **kwargs):
         token = kwargs['token']

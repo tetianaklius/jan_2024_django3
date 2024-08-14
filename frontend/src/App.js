@@ -11,6 +11,7 @@ export const App = () => {
     )
     return (
         <div>
+            <div>hello</div>
             {cars.map(car=> <div key={car.id}>{car.id} -- {car.brand}</div>)}
         </div>
     );
