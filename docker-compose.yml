@@ -46,6 +46,6 @@ services:
       - .env
     restart: on-failure
     command: >
-      sh -c "celery -A configs worker -l info -B"
-#      sh -c "celery -A configs worker -l info"
-#      -B дописали після того, як додали періодичні завдання
+      sh -c "celery -A configs worker -l info"
+#     sh -c "celery -A configs worker -l info -B"
+#      -B дописали після того, як додали періодичні завдання; але поставили назад переший варінт, щоб не закидало пошту спамом

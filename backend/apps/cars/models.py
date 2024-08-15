@@ -21,6 +21,8 @@ class CarModel(BaseModel):
     year = models.IntegerField(validators=[v.MinValueValidator(1990), v.MaxValueValidator(datetime.now().year)])
     body_type = models.CharField(max_length=9, choices=BodyTypeChoices.choices)
     auto_park = models.ForeignKey(AutoParkModel, on_delete=models.CASCADE, related_name='cars')
-    photo = models.ImageField(upload_to=FileService.upload_car_photo, blank=True)
+    photo = models.ImageField(upload_to=FileService.upload_car_photo, blank=True, validators=(
+        v.FileExtensionValidator(["jpg", "jpeg"]),
+    ))
 
     objects = CarManager()
